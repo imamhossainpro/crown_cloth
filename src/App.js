@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom'
 import Home from './Components/Routes/Home/Home.component'
 import Navigation from './Components/Routes/Navigation/Navigation.component'
-import SignIn from './Components/Sign-in/Sign-in.component'
+import Authentication from './Components/Authentication/Authentication.component'
 
 const App = () => {
   return (
@@ -9,7 +9,7 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Navigation/>}>
           <Route index element={<Home/>}/> 
-          <Route path='signIn' element={<SignIn/>}/>
+          <Route path='auth' element={<Authentication/>}/>
         </Route>
         
       </Routes>
