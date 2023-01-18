@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import {getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithRedirect,  signInWithEmailAndPassword, signOut, onAuthStateChanged} from 'firebase/auth';
-import {getFirestore, doc, getDoc, setDoc } from 'firebase/firestore'
+import {getFirestore, doc, getDoc, setDoc, collection, writeBatch, query, getDocs } from 'firebase/firestore'
 
 const firebaseConfig = {
     apiKey: "AIzaSyDiu4NgTBsDncComDZjwrNHeihkNYDdNMY",
@@ -13,7 +13,7 @@ const firebaseConfig = {
   };
 
 
-  const firebaseApp = initializeApp(firebaseConfig);
+const firebaseApp = initializeApp(firebaseConfig);
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -29,6 +29,33 @@ export const signInWithGoogleRedirect = () =>
 
 export const db = getFirestore();
 
+// Adding Category Data on Firebase
+export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => {
+   const collectionRef = collection(db, collectionKey);
+   const batch = writeBatch(db);
+   objectsToAdd.forEach((object) => {
+    const docRef = doc(collectionRef, object.title.toLowerCase());
+    batch.set(docRef, object);
+   });
+   await batch.commit();
+   console.log('Done')
+}
+//Get Caragroies Data From Firebase
+export const getCategoriesAndDocuments = async () => {
+  const collectionRef = collection(db, 'categories');
+  const q = query(collectionRef);
+
+  const querySnapshot = await getDocs(q);
+  const categoryMap = querySnapshot.docs.reduce((acc, docSnapshot) => {
+    const { title, items } = docSnapshot.data();
+    acc[title.toLowerCase()] = items;
+    return acc;
+  }, {});
+
+  return categoryMap;
+};
+
+//Create User Document Firebase Auth
 export const createUserDocumentFromAuth = async (
   userAuth,
   additionalInformation = {}
